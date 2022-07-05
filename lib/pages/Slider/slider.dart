@@ -32,7 +32,13 @@ class _SliderPuzzleState extends State<SliderPuzzle> {
     List<Model> temp = list;
     temp.shuffle();
     list = temp;
-    list.map((e) => print(e.index));
+    setState(() {});
+  }
+
+  solve() {
+    List<Model> temp = list;
+    temp.sort((a, b) => a.index.compareTo(b.index));
+    list = temp;
     setState(() {});
   }
 
@@ -80,13 +86,26 @@ class _SliderPuzzleState extends State<SliderPuzzle> {
           ),
         ),
         Center(
-          child: InkWell(
-            onTap: () => shuffle(),
-            child: const Icon(
-              Icons.shuffle,
-              size: 30,
-              color: Colors.grey,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              InkWell(
+                onTap: () => shuffle(),
+                child: const Icon(
+                  Icons.shuffle,
+                  size: 30,
+                  color: Colors.grey,
+                ),
+              ),
+              InkWell(
+                onTap: () => solve(),
+                child: const Icon(
+                  Icons.done,
+                  size: 30,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
           ),
         ),
       ],
