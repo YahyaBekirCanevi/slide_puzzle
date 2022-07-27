@@ -1,7 +1,8 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:slide_puzzle/Models/custom_image.dart';
-import 'package:slide_puzzle/Models/model.dart';
+import 'package:slide_puzzle/pages/Slider/slide_control_mixin.dart';
 
 class SliderPuzzle extends StatefulWidget {
   const SliderPuzzle({Key? key, required this.size, required this.cut})
@@ -13,103 +14,19 @@ class SliderPuzzle extends StatefulWidget {
   State<SliderPuzzle> createState() => _SliderPuzzleState();
 }
 
-class _SliderPuzzleState extends State<SliderPuzzle> {
-  var list = <Model>[];
+class _SliderPuzzleState extends State<SliderPuzzle>
+    with SlideControlMixin, SingleTickerProviderStateMixin {
+  //Widget fullImage = const SizedBox();
+  @override
+  late AnimationController animController;
 
-  Widget fullImage = const SizedBox();
-
-  var isLoaded = false.obs;
-
-  initialize() async {
-    CustomImage image = CustomImage(
-        imagePath: 'img/pic.png', size: widget.size, cut: widget.cut);
-    fullImage = image.fullImage();
-    list = await image.splitImage();
-    isLoaded(true);
-  }
-
-  shuffle() {
-    List<Model> temp = list;
-    temp.shuffle();
-    list = temp;
-    setState(() {});
-  }
-
-  solve() {
-    List<Model> temp = list;
-    temp.sort((a, b) => a.index.compareTo(b.index));
-    list = temp;
-    setState(() {});
-  }
-
-  buildBody() {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(20),
-          color: Colors.black.withOpacity(.2),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ...List.generate(
-                widget.cut,
-                (i) => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ...List.generate(
-                      widget.cut,
-                      (j) => Container(
-                        margin: const EdgeInsets.all(2),
-                        child: Stack(
-                          children: [
-                            list[i * widget.cut + j].widget,
-                            Positioned(
-                              top: 2,
-                              left: 2,
-                              child: Container(
-                                color: Colors.lightGreen,
-                                padding: const EdgeInsets.all(2),
-                                child: Text(
-                                  list[i * widget.cut + j].index.toString(),
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              InkWell(
-                onTap: () => shuffle(),
-                child: const Icon(
-                  Icons.shuffle,
-                  size: 30,
-                  color: Colors.grey,
-                ),
-              ),
-              InkWell(
-                onTap: () => solve(),
-                child: const Icon(
-                  Icons.done,
-                  size: 30,
-                  color: Colors.grey,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+  @override
+  void initState() {
+    animController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
     );
+    super.initState();
   }
 
   @override
