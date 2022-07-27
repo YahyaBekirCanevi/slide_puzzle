@@ -6,7 +6,6 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -19,7 +18,7 @@ class MainScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: SliderPuzzle(size: 400, cut: 4),
+      body: const SliderPuzzle(size: 600, cut: 3),
     );
   }
 }
