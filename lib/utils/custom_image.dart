@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as imglib;
-import 'package:slide_puzzle/Models/model.dart';
+import 'package:slide_puzzle/pages/game/model.dart';
 
 class CustomImage {
   CustomImage({

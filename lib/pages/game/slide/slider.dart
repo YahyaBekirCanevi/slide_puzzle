@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:slide_puzzle/pages/Slider/slide_control_mixin.dart';
+import 'package:slide_puzzle/pages/game/slide/slide_control_mixin.dart';
 
 class SliderPuzzle extends StatefulWidget {
   const SliderPuzzle({Key? key, required this.size, required this.cut})

@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:slide_puzzle/Models/custom_image.dart';
-import 'package:slide_puzzle/Models/model.dart';
-import 'package:slide_puzzle/pages/Slider/bottom_bar.dart';
-import 'package:slide_puzzle/pages/Slider/slider.dart';
+import 'package:slide_puzzle/pages/game/bottom_bar/bottom_bar.dart';
+import 'package:slide_puzzle/pages/game/model.dart';
+import 'package:slide_puzzle/pages/game/slide/slider.dart';
+import 'package:slide_puzzle/utils/custom_image.dart';
 
 mixin SlideControlMixin on State<SliderPuzzle> {
   AnimationController get animController;
@@ -18,6 +18,7 @@ mixin SlideControlMixin on State<SliderPuzzle> {
   RxBool isSolved = true.obs;
 
   initialize() async {
+    print("initialize");
     CustomImage image = CustomImage(
         imagePath: 'img/pic.png', size: widget.size, cut: widget.cut);
     list.value = await image.splitImage();
@@ -27,11 +28,13 @@ mixin SlideControlMixin on State<SliderPuzzle> {
   }
 
   shuffle() {
+    print("shuffle");
     list.value.shuffle();
     isSolved.value = checkSolve();
   }
 
   checkSolve() {
+    print("checkSolve");
     count.value = 0;
     for (int i = 0; i < list.value.length; i++) {
       count.value += list.value[i].index == i ? 1 : 0;
@@ -40,67 +43,70 @@ mixin SlideControlMixin on State<SliderPuzzle> {
   }
 
   solve() {
+    print("solve");
     list.value.sort((a, b) => a.index.compareTo(b.index));
 
     isSolved.value = checkSolve();
   }
 
   buildBody() {
+    print("buildBody");
     const margin = 4;
-    return SingleChildScrollView(
-      controller: ScrollController(initialScrollOffset: 0),
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                color: Colors.black.withOpacity(.2),
-                width: widget.size + (widget.cut + 1) * margin,
-                height: widget.size + (widget.cut + 1) * margin,
-              ),
-              ...List.generate(
-                list.length,
-                (i) => positionedTile(i, list.value[i], margin),
-              ),
-            ],
-          ),
-          BottomBar(
-            steps: steps.value.toDouble(),
-            count: count.value.toDouble(),
-            shuffle: () => shuffle(),
-            solve: () => solve(),
-          ),
-        ],
-      ),
+    var size = widget.size + (widget.cut + 1) * margin;
+    return Column(
+      children: [
+        Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              color: Colors.black.withOpacity(.2),
+              width: size,
+              height: size,
+            ),
+            ...List.generate(
+              list.length,
+              (i) => positionedTile(i, margin),
+            ),
+          ],
+        ),
+        BottomBar(
+          steps: steps.value.toDouble(),
+          count: count.value.toDouble(),
+          shuffle: () => shuffle(),
+          solve: () => solve(),
+        ),
+      ],
     );
   }
 
-  positionedTile(i, e, margin) {
-    var top =
-        (e.index / widget.cut).floor() * (widget.size / widget.cut + margin) +
-            margin;
-    var left =
-        (e.index % widget.cut) * (widget.size / widget.cut + margin) + margin;
-    return AnimatedPositioned(
+  positionedTile(i, margin) {
+    print("positionedTile $i");
+    var size = widget.size / widget.cut + margin;
+    var top = (list.value[i].index / widget.cut).floor() * size + margin;
+    var left = (list.value[i].index % widget.cut) * size + margin;
+    return /* Animated */ Positioned(
       top: top,
       left: left,
-      duration: const Duration(seconds: 1),
-      child: itemCard(i, e),
+      //duration: const Duration(seconds: 1),
+      child: tile(i),
     );
   }
 
-  itemCard(index, e) {
+  tile(i) {
+    var index = list.value[i].index;
     var lastIndex = list.value.length - 1;
+    print("tile $i $index");
     return GestureDetector(
       onTap: () {
         steps.value++;
         var dif = (lastIndex - index).abs();
         if (dif == 1 || dif == widget.cut) {
+          var e = list.value[index];
           list.value[index] = list.value[lastIndex];
           list.value[lastIndex] = e;
+          print("switch $index $lastIndex");
+          isSolved.value = checkSolve();
         }
-        isSolved.value = checkSolve();
       },
       child: Stack(
         children: [
@@ -117,7 +123,7 @@ mixin SlideControlMixin on State<SliderPuzzle> {
             top: 0,
             left: 0,
             child: Text(
-              index.toString() + e.index.toString(),
+              index.toString() + list.value[index].index.toString(),
               style: const TextStyle(color: Colors.green, fontSize: 18),
             ),
           ),
