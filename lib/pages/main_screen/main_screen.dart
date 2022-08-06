@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:slide_puzzle/pages/Slider/slider.dart';
+import 'package:slide_puzzle/pages/game/slide/slider.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({Key? key}) : super(key: key);
